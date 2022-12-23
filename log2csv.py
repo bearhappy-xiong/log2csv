@@ -31,7 +31,6 @@ def log2csv(inputfilepath):
     rows = []
     with open(inputfilepath) as f:
         for row in csv.reader(f, delimiter=' '):
-            print("row:", row)
             rows.append(Log2Csv(row).to_dict(field_names=FIELD_NAMES))
 
     df = DataFrame(rows)
@@ -75,7 +74,6 @@ class Log2Csv(object):
                 # 这个正值表达式的意思是匹配出字符串中的数字，包括小数
                 temp = re.findall(r"\d+\.?\d*",self[field_name])
                 t = temp[0]  # 提取出的是一个列表，但是实质上只有一个元素, 取出来.
-                print("t:", t)
                 if field_name == 'episode':
                     ret.update({str(field_name): int(float(t))})
                 if field_name == 'episode_reward':
