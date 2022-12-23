@@ -7,25 +7,35 @@ from io import StringIO
 
 from pandas import DataFrame
 
-
 FIELD_NAMES = [
     "episode",
     "episode_reward",
     "step",
 ]
 
-def log2csv(inputfile, outputfile):
-    if not os.path.isfile(inputfile):
-        print("error message :", f"'{inputfile}' file does not exist")
+def log2csv(inputfilepath):
+    outputfilepath = os.path.join(os.path.dirname(inputfilepath), "eval.csv")
+    """
+    也可以使用replace来替换文件扩展名.
+    使用replace方法的一个优点是，如果你的文件扩展名不是".log"，它仍然可以正常工作。
+    例如，如果你的文件扩展名是".txt"，那么代码仍然会将其替换为".csv"。
+
+    但是，使用os.path.join和os.path.dirname的优点是，它们更通用，
+    可以用于任何操作系统，而不仅仅是Windows。
+    """
+
+    if not os.path.isfile(inputfilepath):
+        print("error message :", f"'{inputfilepath}' file does not exist")
         sys.exit(2)
 
     rows = []
-    with open(inputfile) as f:
+    with open(inputfilepath) as f:
         for row in csv.reader(f, delimiter=' '):
+            print("row:", row)
             rows.append(Log2Csv(row).to_dict(field_names=FIELD_NAMES))
 
     df = DataFrame(rows)
-    df.to_csv(outputfile, index=False, columns=FIELD_NAMES, header=FIELD_NAMES,
+    df.to_csv(outputfilepath, index=False, columns=FIELD_NAMES, header=FIELD_NAMES,
               encoding='utf-8')
 
     print("COMPLETE CONVERTING LOG TO CSV")
@@ -42,10 +52,9 @@ class Log2Csv(object):
             # 提取出列表中的字符串形式的数字
             i = -1
             for field_name in self.field_names:
-                # REVIEW - 下面的写法对应于这样的single_line: 
+                # 下面的写法对应于这样的single_line: 
                 # ['episode', '0', 'episodeReward', '0.0', 'step', '0']
-                # 如果有其他的格式, 需要修改这里的代码, 也就是i的取值方式.
-                i = i+2  # i会取值1, 3, 5...
+                i = i+2  # i会取值1, 3, 5
                 self.data.update({field_name: single_line[i]})
 
     def __getitem__(self, item):
@@ -66,6 +75,7 @@ class Log2Csv(object):
                 # 这个正值表达式的意思是匹配出字符串中的数字，包括小数
                 temp = re.findall(r"\d+\.?\d*",self[field_name])
                 t = temp[0]  # 提取出的是一个列表，但是实质上只有一个元素, 取出来.
+                print("t:", t)
                 if field_name == 'episode':
                     ret.update({str(field_name): int(float(t))})
                 if field_name == 'episode_reward':
@@ -76,6 +86,6 @@ class Log2Csv(object):
 
 
 if __name__ == "__main__":
-    inputfile = r'E:\Code\MycodeBackup\log2csv_github_public\test_data\eval.log'
-    outputfile = r'E:\Code\MycodeBackup\log2csv_github_public\test_data\eval.csv'
-    log2csv(inputfile, outputfile)
+    inputfilepath = r'E:\Code\MycodeBackup\dmc_codebase\logs\walker_walk\drq\42_one_encoder\eval.log'
+    outputfilepath = r'E:\Code\MycodeBackup\dmc_codebase\logs\walker_walk\drq\42_one_encoder\eval.csv'
+    log2csv(inputfilepath)
