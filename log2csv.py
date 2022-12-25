@@ -13,8 +13,11 @@ FIELD_NAMES = [
     "step",
 ]
 
-def log2csv(inputfilepath):
-    outputfilepath = os.path.join(os.path.dirname(inputfilepath), "eval.csv")
+def log2csv(inputfilepath, outputfilepath=None):
+    if outputfilepath is None:
+        outputfilepath = os.path.join(os.path.dirname(inputfilepath), "eval.csv")
+    else:
+        outputfilepath = outputfilepath
     """
     也可以使用replace来替换文件扩展名.
     使用replace方法的一个优点是，如果你的文件扩展名不是".log"，它仍然可以正常工作。
@@ -23,6 +26,7 @@ def log2csv(inputfilepath):
     但是，使用os.path.join和os.path.dirname的优点是，它们更通用，
     可以用于任何操作系统，而不仅仅是Windows。
     """
+    # TODO - 添加对子文件夹的支持
 
     if not os.path.isfile(inputfilepath):
         print("error message :", f"'{inputfilepath}' file does not exist")
@@ -84,6 +88,6 @@ class Log2Csv(object):
 
 
 if __name__ == "__main__":
-    inputfilepath = r'E:\Code\MycodeBackup\dmc_codebase\logs\walker_walk\drq\42_one_encoder\eval.log'
-    outputfilepath = r'E:\Code\MycodeBackup\dmc_codebase\logs\walker_walk\drq\42_one_encoder\eval.csv'
-    log2csv(inputfilepath)
+    inputfilepath = os.getcwd()
+    outputfilepath = None
+    log2csv(inputfilepath, outputfilepath)
