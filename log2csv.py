@@ -88,6 +88,6 @@ class Log2Csv(object):
 
 
 if __name__ == "__main__":
-    inputfilepath = os.getcwd()
+    inputfilepath = os.path.join(os.getcwd(), 'eval.log')
     outputfilepath = None
     log2csv(inputfilepath, outputfilepath)
